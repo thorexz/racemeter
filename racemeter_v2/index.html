@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080c13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="RaceMeter Motorcycle — trip logging and motorcycle maintenance companion.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="styles.css">
+<title>RaceMeter V2</title>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><span class="brand-mark">R</span><span><b>RACEMETER</b><small>ADVANCED MOTORCYCLE EDITION</small></span></a>
+  <span class="local-pill"><i></i> LOCAL FIRST</span>
+</header>
+<main>
+  <section class="hero panel">
+    <div class="eyebrow">RIDE COMPANION <span>V 2.0</span></div>
+    <div class="hero-flex"><div><h1>KNOW YOUR<br><em>JOURNEY.</em></h1><p>Catat perjalanan dan perawatan motor dengan data GPS nyata dari iPhone.</p></div><div class="hero-symbol">RM<span>02</span></div></div>
+    <div class="hero-foot"><span>DEVICE <b>iPHONE / SAFARI</b></span><span>STORAGE <b>ON-DEVICE</b></span></div>
+  </section>
+
+  <section class="section-head"><div><span class="eyebrow">LIVE TELEMETRY</span><h2>Status GPS</h2></div><span id="gpsBadge" class="badge neutral">BELUM AKTIF</span></section>
+  <section class="gps-grid">
+    <article class="panel metric"><span class="metric-label">GPS ACCURACY</span><strong id="accuracy">—</strong><small>ESTIMASI RADIUS</small></article>
+    <article class="panel metric"><span class="metric-label">LOKASI</span><strong id="locationStatus" class="metric-word">OFFLINE</strong><small id="locationDetail">Izin lokasi belum diminta</small></article>
+    <article class="panel metric"><span class="metric-label">JARAK TRIP</span><strong id="tripDistance">0.00 <small>km</small></strong><small>PERJALANAN AKTIF</small></article>
+    <article class="panel metric"><span class="metric-label">DURASI</span><strong id="tripDuration">00:00</strong><small>PERJALANAN AKTIF</small></article>
+  </section>
+
+  <section class="panel section">
+    <div class="section-head"><div><span class="eyebrow">TRIP RECORDER</span><h2>Pencatatan perjalanan</h2></div><span class="tag">GPS</span></div>
+    <p class="muted">Aktifkan GPS saat motor berhenti dan siapkan ponsel dengan aman. Pencatatan lokasi membutuhkan izin lokasi dan koneksi GPS. Jangan melihat atau mengoperasikan ponsel saat berkendara.</p>
+    <div class="gps-readout"><div><span>KOORDINAT TERAKHIR</span><b id="coords">Belum tersedia</b></div><div><span>PEMBARUAN</span><b id="lastUpdate">—</b></div></div>
+    <div class="button-row">
+      <button id="gpsBtn" class="secondary">Aktifkan GPS</button>
+      <button id="startTripBtn" class="primary" disabled>Mulai catat trip</button>
+      <button id="stopTripBtn" class="danger" disabled>Selesaikan trip</button>
+    </div>
+    <p id="gpsMessage" class="notice" role="status">GPS belum berjalan.</p>
+    <div class="quality"><div class="quality-head"><span>KUALITAS DATA LOKASI</span><b id="qualityText">MENUNGGU GPS</b></div><div class="quality-track"><i id="qualityBar"></i></div><small>Estimasi akurasi GPS browser; bukan jaminan ketelitian pengukuran.</small></div>
+  </section>
+
+  <section class="panel section">
+    <div class="section-head"><div><span class="eyebrow">TRIP HISTORY</span><h2>Riwayat perjalanan</h2></div><span class="tag" id="tripCount">0 TRIP</span></div>
+    <div id="tripList" class="record-list"><p class="empty">Belum ada perjalanan tersimpan.</p></div>
+  </section>
+
+  <section class="panel section">
+    <div class="section-head"><div><span class="eyebrow">GARAGE PROFILE</span><h2>Profil kendaraan</h2></div><span class="tag">01</span></div>
+    <form id="bikeForm" class="form-grid">
+      <label>Nama motor<input id="bikeName" maxlength="40" placeholder="Motor Saya"></label>
+      <label>Model / tipe<input id="bikeModel" maxlength="60" placeholder="Merek dan tipe motor"></label>
+      <label>Odometer (km)<input id="bikeOdo" type="number" min="0" step="1" placeholder="Contoh: 12500"></label>
+      <button class="primary" type="submit">Simpan profil</button>
+    </form>
+  </section>
+
+  <section class="panel section">
+    <div class="section-head"><div><span class="eyebrow">MAINTENANCE LOG</span><h2>Catatan perawatan</h2></div><span class="tag" id="serviceCount">0 DATA</span></div>
+    <form id="serviceForm" class="form-grid">
+      <label>Jenis perawatan<input id="serviceType" required maxlength="60" placeholder="Contoh: Ganti oli"></label>
+      <label>Tanggal<input id="serviceDate" type="date" required></label>
+      <label>Odometer (km)<input id="serviceOdo" type="number" min="0" step="1" required></label>
+      <label>Biaya (Rp)<input id="serviceCost" type="number" min="0" step="1000" placeholder="Opsional"></label>
+      <label class="full">Catatan<textarea id="serviceNote" rows="2" maxlength="240" placeholder="Catatan tambahan"></textarea></label>
+      <button class="primary" type="submit">+ Tambah perawatan</button>
+    </form>
+    <div id="serviceList" class="record-list"><p class="empty">Belum ada catatan perawatan.</p></div>
+  </section>
+
+  <section class="panel section">
+    <div class="section-head"><div><span class="eyebrow">FUEL LOG</span><h2>Catatan BBM</h2></div><span class="tag" id="fuelCount">0 DATA</span></div>
+    <form id="fuelForm" class="form-grid">
+      <label>Tanggal<input id="fuelDate" type="date" required></label>
+      <label>Odometer (km)<input id="fuelOdo" type="number" min="0" step="1" required></label>
+      <label>Volume (liter)<input id="fuelLiters" type="number" min="0.01" step="0.01" required></label>
+      <label>Total biaya (Rp)<input id="fuelCost" type="number" min="0" step="1000" placeholder="Opsional"></label>
+      <button class="primary" type="submit">+ Tambah BBM</button>
+    </form>
+    <div id="fuelList" class="record-list"><p class="empty">Belum ada catatan BBM.</p></div>
+  </section>
+
+  <section class="panel section">
+    <div class="section-head"><div><span class="eyebrow">DATA & PRIVACY</span><h2>Kelola data</h2></div><span class="tag">LOCAL DB</span></div>
+    <p class="muted">Profil, perjalanan, servis, dan BBM disimpan di IndexedDB pada browser ini. Ekspor backup secara berkala. Data tidak otomatis tersinkron ke Google Sheets.</p>
+    <div class="button-row">
+      <button id="exportBtn" class="secondary">Ekspor backup JSON</button>
+      <label class="import-btn">Impor backup JSON<input id="importFile" type="file" accept="application/json"></label>
+      <button id="clearBtn" class="danger">Hapus semua data</button>
+    </div>
+    <p id="notice" class="notice" role="status"></p>
+  </section>
+  <section class="safety-note"><b>KESELAMATAN</b><p>RaceMeter bukan alat navigasi atau alat ukur tersertifikasi. GPS ponsel dapat kehilangan sinyal, terlambat memperbarui posisi, atau menghasilkan data yang meleset. Pasang ponsel dengan aman, siapkan aplikasi sebelum berangkat, dan jangan berinteraksi dengan layar selama berkendara.</p></section>
+</main>
+<footer>RACEMETER <span>LOCAL-FIRST MOTORCYCLE COMPANION · V2.0</span></footer>
+<script src="app.js"></script>
+</body>
+</html>
