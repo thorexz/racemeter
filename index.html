@@ -11,11 +11,11 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="stylesheet" href="styles.css">
-<title>RaceMeter V2</title>
+<title>RaceMeter V4</title>
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="#"><span class="brand-mark">R</span><span><b>RACEMETER</b><small>ADVANCED MOTORCYCLE EDITION</small></span></a>
+  <a class="brand" href="#"><span class="brand-mark">R</span><span><b>RACEMETER</b><small>TRIP & MAINTENANCE COMPANION</small></span></a>
   <span class="local-pill"><i></i> LOCAL FIRST</span>
 </header>
 <main>
@@ -23,6 +23,16 @@
     <div class="eyebrow">RIDE COMPANION <span>V 2.0</span></div>
     <div class="hero-flex"><div><h1>KNOW YOUR<br><em>JOURNEY.</em></h1><p>Catat perjalanan dan perawatan motor dengan data GPS nyata dari iPhone.</p></div><div class="hero-symbol">RM<span>02</span></div></div>
     <div class="hero-foot"><span>DEVICE <b>iPHONE / SAFARI</b></span><span>STORAGE <b>ON-DEVICE</b></span></div>
+  </section>
+
+  <section class="panel section overview-section">
+    <div class="section-head"><div><span class="eyebrow">RIDE SUMMARY</span><h2>Ringkasan aktivitas</h2></div><span class="tag">STATISTIK</span></div>
+    <div class="gps-grid summary-grid">
+      <article class="panel metric"><span class="metric-label">TOTAL JARAK</span><strong id="totalDistance">0.00 <small>km</small></strong><small>SEMUA TRIP</small></article>
+      <article class="panel metric"><span class="metric-label">TOTAL WAKTU</span><strong id="totalDuration">00:00</strong><small>SEMUA TRIP</small></article>
+      <article class="panel metric"><span class="metric-label">JUMLAH TRIP</span><strong id="totalTrips">0</strong><small>TERSIMPAN</small></article>
+      <article class="panel metric"><span class="metric-label">RATA-RATA TRIP</span><strong id="averageTrip">0.00 <small>km</small></strong><small>JARAK / TRIP</small></article>
+    </div>
   </section>
 
   <section class="section-head"><div><span class="eyebrow">LIVE TELEMETRY</span><h2>Status GPS</h2></div><span id="gpsBadge" class="badge neutral">BELUM AKTIF</span></section>
@@ -37,6 +47,35 @@
     <div class="section-head"><div><span class="eyebrow">TRIP RECORDER</span><h2>Pencatatan perjalanan</h2></div><span class="tag">GPS</span></div>
     <p class="muted">Aktifkan GPS saat motor berhenti dan siapkan ponsel dengan aman. Pencatatan lokasi membutuhkan izin lokasi dan koneksi GPS. Jangan melihat atau mengoperasikan ponsel saat berkendara.</p>
     <div class="gps-readout"><div><span>KOORDINAT TERAKHIR</span><b id="coords">Belum tersedia</b></div><div><span>PEMBARUAN</span><b id="lastUpdate">—</b></div></div>
+    <div class="auto-stop panel-inner">
+      <label for="autoStopDistance">AUTO STOP BERDASARKAN JARAK</label>
+      <select id="autoStopDistance">
+        <option value="0">Nonaktif — berhenti manual</option>
+        <option value="0.5">500 m</option>
+        <option value="1">1 km</option>
+        <option value="2">2 km</option>
+        <option value="5">5 km</option>
+        <option value="10">10 km</option>
+        <option value="20">20 km</option>
+      </select>
+      <div class="auto-progress"><div class="auto-progress-head"><span>PROGRES TRIP</span><b id="autoStopProgress">Auto stop nonaktif</b></div><div class="quality-track"><i id="autoStopBar"></i></div></div>
+      <small>Jika diaktifkan, pencatatan trip biasa akan diselesaikan otomatis saat jarak GPS mencapai batas pilihan. Pembacaan GPS dapat meleset.</small>
+    </div>
+    <div class="auto-stop panel-inner">
+      <label for="distanceMarker">PENANDA JARAK PERJALANAN</label>
+      <select id="distanceMarker">
+        <option value="0">Tidak menggunakan penanda</option>
+        <option value="201">201 m</option>
+        <option value="402">402 m</option>
+        <option value="500">500 m</option>
+        <option value="1000">1 km</option>
+        <option value="2000">2 km</option>
+      </select>
+      <small id="distanceMarkerStatus">Penanda hanya memberi notifikasi saat jarak perjalanan tercapai; pencatatan tetap berjalan.</small>
+    </div>
+    <label class="trip-category-label">Kategori perjalanan
+      <select id="tripCategory"><option value="Harian">Harian</option><option value="Sekolah">Sekolah</option><option value="Kerja">Kerja</option><option value="Wisata">Wisata</option><option value="Lainnya">Lainnya</option></select>
+    </label>
     <div class="button-row">
       <button id="gpsBtn" class="secondary">Aktifkan GPS</button>
       <button id="startTripBtn" class="primary" disabled>Mulai catat trip</button>
@@ -66,11 +105,13 @@
     <form id="serviceForm" class="form-grid">
       <label>Jenis perawatan<input id="serviceType" required maxlength="60" placeholder="Contoh: Ganti oli"></label>
       <label>Tanggal<input id="serviceDate" type="date" required></label>
-      <label>Odometer (km)<input id="serviceOdo" type="number" min="0" step="1" required></label>
+      <label>Odometer saat servis (km)<input id="serviceOdo" type="number" min="0" step="1" required></label>
+      <label>Ingatkan lagi setelah (km)<input id="serviceInterval" type="number" min="0" step="500" placeholder="Contoh: 2000"></label>
       <label>Biaya (Rp)<input id="serviceCost" type="number" min="0" step="1000" placeholder="Opsional"></label>
       <label class="full">Catatan<textarea id="serviceNote" rows="2" maxlength="240" placeholder="Catatan tambahan"></textarea></label>
       <button class="primary" type="submit">+ Tambah perawatan</button>
     </form>
+    <div id="serviceReminder" class="notice reminder" role="status"></div>
     <div id="serviceList" class="record-list"><p class="empty">Belum ada catatan perawatan.</p></div>
   </section>
 
@@ -83,6 +124,7 @@
       <label>Total biaya (Rp)<input id="fuelCost" type="number" min="0" step="1000" placeholder="Opsional"></label>
       <button class="primary" type="submit">+ Tambah BBM</button>
     </form>
+    <div class="fuel-summary"><span>ESTIMASI KONSUMSI BBM</span><b id="fuelEfficiency">Belum cukup data</b><small>Perkiraan dari dua pengisian BBM berurutan dan odometer.</small></div>
     <div id="fuelList" class="record-list"><p class="empty">Belum ada catatan BBM.</p></div>
   </section>
 
@@ -98,7 +140,7 @@
   </section>
   <section class="safety-note"><b>KESELAMATAN</b><p>RaceMeter bukan alat navigasi atau alat ukur tersertifikasi. GPS ponsel dapat kehilangan sinyal, terlambat memperbarui posisi, atau menghasilkan data yang meleset. Pasang ponsel dengan aman, siapkan aplikasi sebelum berangkat, dan jangan berinteraksi dengan layar selama berkendara.</p></section>
 </main>
-<footer>RACEMETER <span>LOCAL-FIRST MOTORCYCLE COMPANION · V2.0</span></footer>
+<footer>RACEMETER <span>LOCAL-FIRST MOTORCYCLE COMPANION · V4.0</span></footer>
 <script src="app.js"></script>
 </body>
 </html>
